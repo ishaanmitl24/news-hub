@@ -3,8 +3,10 @@ import { useRouter } from "next/router";
 const Navbar = () => {
   const router = useRouter();
   return (
-    <nav className="flex sticky top-0 justify-between px-6 py-2 bg-gray-950 text-white">
-      <span className=" text-md self-center font-bold">Gen</span>
+    <nav className="flex sticky top-0 justify-between px-6 py-2 bg-gray-950 text-white z-[100]">
+      <span className=" text-md self-center font-bold">
+        <Link href="/">NEWSHUB</Link>
+      </span>
       <ul className="flex space-x-5 text-sm self-center">
         <li
           className={`tracking-wide cursor-pointer  border-0  hover:border-b-2 hover:border-red-600 ${
@@ -63,7 +65,7 @@ const Navbar = () => {
         </li>
       </ul>
       <span className="text-sm self-center border-2 cursor-pointer font-semibold px-3 py-1 rounded-3xl hover:text-black hover:bg-white hover:font-semibold">
-        Sign Up for India Gen
+        <Link href="/signup">Sign Up for Newshub</Link>
       </span>
     </nav>
   );

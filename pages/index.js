@@ -8,6 +8,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home(props) {
   const {topHeadlines,entertainment,science,sports,health,business,technology} = props;
+
+  
   return (
     <div className="flex flex-col">
       <div className="bg-gray-950 h-[100vh] flex flex-col">
