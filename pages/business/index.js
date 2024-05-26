@@ -7,7 +7,8 @@ const Business = (props) => {
   const { data, page: pag, totalPages } = props;
   const router = useRouter();
   const [page, setPage] = useState(parseInt(pag));
-
+  
+  
   const pageHandler = (event, value) => {
     setPage(value);
   };

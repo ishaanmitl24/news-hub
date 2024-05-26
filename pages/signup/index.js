@@ -1,8 +1,50 @@
 import Inputs from "@/components/Inputs";
 import Link from "next/link";
-import { Box, Typography, Button, Card } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
+import { useState } from "react";
 
 const Signup = () => {
+  const [userData, setUserData] = useState({
+    email: "",
+    password: "",
+    name: "",
+  });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+    setMessage(null);
+
+    const response = await fetch("http://localhost:8080/auth/signup", {
+      method: "PUT",
+      body: JSON.stringify({
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      setError("User Already exists!");
+    } else {
+      setMessage(result.message);
+    }
+    setLoading(false);
+  };
+
   return (
     <Box sx={{ height: "100vh", display: "flex" }}>
       <Box sx={{ width: "50%", height: "inherit", position: "relative" }}>
@@ -53,12 +95,44 @@ const Signup = () => {
           </Box>
         </Box>
         <Box sx={{ px: 10 }}>
-          <form>
+          <form onSubmit={submitHandler}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Inputs name="email" label="E-mail" type="email" />
-              <Inputs name="password" label="Password" type="password" />
+              <Inputs
+                name="name"
+                label="Username"
+                type="text"
+                onChange={(event) => {
+                  setUserData((prev) => {
+                    return { ...prev, name: event.target.value };
+                  });
+                }}
+              />
+              <Inputs
+                name="email"
+                label="E-mail"
+                type="email"
+                onChange={(event) => {
+                  setUserData((prev) => {
+                    return { ...prev, email: event.target.value };
+                  });
+                }}
+              />
+              <Inputs
+                name="password"
+                label="Password"
+                type="password"
+                onChange={(event) => {
+                  setUserData((prev) => {
+                    return { ...prev, password: event.target.value };
+                  });
+                }}
+              />
+              {loading && <CircularProgress />}
+              {message && <Alert severity="success">{message}</Alert>}
+              {error && <Alert severity="error">{error}</Alert>}
               <Button
                 variant="contained"
+                type="submit"
                 sx={{
                   mt: 2,
                   "&.MuiButton-root": {
@@ -84,7 +158,7 @@ const Signup = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          gap:'3rem'
+          gap: "3rem",
         }}
       >
         <Box
@@ -127,8 +201,29 @@ const Signup = () => {
           </Button>
         </Box>
         <Box>
-            <Typography sx={{color:'#F7FAFC',fontSize:'28px',fontWeight:700,letterSpacing:'0.06em'}}>Introducing new features</Typography>
-            <Typography sx={{width:"400px",mt:3,fontSize:'15px',color:'#CFD9E0',textAlign:'center'}}>Analyzing previous trends ensures that businesses always make the right decision. And as the scale of the decision and it’s impact magnifies...</Typography>
+          <Typography
+            sx={{
+              color: "#F7FAFC",
+              fontSize: "28px",
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+            }}
+          >
+            Introducing new features
+          </Typography>
+          <Typography
+            sx={{
+              width: "400px",
+              mt: 3,
+              fontSize: "15px",
+              color: "#CFD9E0",
+              textAlign: "center",
+            }}
+          >
+            Analyzing previous trends ensures that businesses always make the
+            right decision. And as the scale of the decision and it’s impact
+            magnifies...
+          </Typography>
         </Box>
       </Box>
     </Box>

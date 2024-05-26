@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import classes from "./index.module.css";
 
 const Inputs = (props) => {
-  const { label, name, type } = props;
+  const { label, name, type, onChange } = props;
 
   return (
     <Box
@@ -19,6 +19,7 @@ const Inputs = (props) => {
         </label>
       )}
       <input
+        onChange={onChange}
         className={type === "checkbox" ? "" : classes.input}
         type={type}
         name={name}

@@ -1,8 +1,62 @@
 import Inputs from "@/components/Inputs";
 import Link from "next/link";
-import { Box, Typography, Button, Card } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 const Login = () => {
+  const [userData, setUserData] = useState({
+    email: "",
+    password: "",
+    rememberme: false,
+  });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+  const router = useRouter()
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+    setMessage(null);
+
+    const response = await fetch("http://localhost:8080/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email: userData.email,
+        password: userData.password,
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const result = await response.json();
+
+    if (response.status !== 201 && response.status !== 200) {
+        setError(result.message);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        setError(null);
+        setMessage(result.message);
+        const remainingMilliseconds = 60 * 60 * 1000;
+        const expiryDate = new Date(new Date().getTime() + remainingMilliseconds);
+        localStorage.setItem('expiryDate', expiryDate.toISOString());
+        localStorage.setItem("userId", result.userId);
+        localStorage.setItem("token", result.token);
+        setTimeout(()=>{
+            router.push('/')
+        },2000)
+      }
+    setLoading(false);
+  };
+
   return (
     <Box sx={{ height: "100vh", display: "flex" }}>
       <Box sx={{ width: "50%", height: "inherit", position: "relative" }}>
@@ -53,15 +107,42 @@ const Login = () => {
           </Box>
         </Box>
         <Box sx={{ px: 10 }}>
-          <form>
+          <form onSubmit={submitHandler}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Inputs name="email" label="E-mail" type="email" />
-              <Inputs name="password" label="Password" type="password" />
+              <Inputs
+                name="email"
+                label="E-mail"
+                type="email"
+                onChange={(event) => {
+                  setUserData((prev) => {
+                    return { ...prev, email: event.target.value };
+                  });
+                }}
+              />
+              <Inputs
+                name="password"
+                label="Password"
+                type="password"
+                onChange={(event) => {
+                  setUserData((prev) => {
+                    return { ...prev, password: event.target.value };
+                  });
+                }}
+              />
               <Box
                 sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
               >
                 <Box sx={{ display: "flex", gap: 2 }}>
-                  <Inputs type="checkbox" label="Remember me" name="remember" />
+                  <Inputs
+                    type="checkbox"
+                    label="Remember me"
+                    name="remember"
+                    onChange={(event) => {
+                      setUserData((prev) => {
+                        return { ...prev, rememberme: event.target.checked };
+                      });
+                    }}
+                  />
                   <Typography
                     sx={{
                       alignSelf: "center",
@@ -76,8 +157,12 @@ const Login = () => {
                   Forgot Password?
                 </Typography>
               </Box>
+              {loading && <CircularProgress />}
+              {message && <Alert severity="success">{message}</Alert>}
+              {error && <Alert severity="error">{error}</Alert>}
               <Button
                 variant="contained"
+                type="submit"
                 sx={{
                   mt: 2,
                   "&.MuiButton-root": {
@@ -103,7 +188,7 @@ const Login = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          gap:'3rem'
+          gap: "3rem",
         }}
       >
         <Box
@@ -146,8 +231,29 @@ const Login = () => {
           </Button>
         </Box>
         <Box>
-            <Typography sx={{color:'#F7FAFC',fontSize:'28px',fontWeight:700,letterSpacing:'0.06em'}}>Introducing new features</Typography>
-            <Typography sx={{width:"400px",mt:3,fontSize:'15px',color:'#CFD9E0',textAlign:'center'}}>Analyzing previous trends ensures that businesses always make the right decision. And as the scale of the decision and it’s impact magnifies...</Typography>
+          <Typography
+            sx={{
+              color: "#F7FAFC",
+              fontSize: "28px",
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+            }}
+          >
+            Introducing new features
+          </Typography>
+          <Typography
+            sx={{
+              width: "400px",
+              mt: 3,
+              fontSize: "15px",
+              color: "#CFD9E0",
+              textAlign: "center",
+            }}
+          >
+            Analyzing previous trends ensures that businesses always make the
+            right decision. And as the scale of the decision and it’s impact
+            magnifies...
+          </Typography>
         </Box>
       </Box>
     </Box>

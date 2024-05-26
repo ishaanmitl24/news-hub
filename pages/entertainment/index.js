@@ -1,5 +1,8 @@
 import LightMode from "@/components/LightMode";
+import { useRouter } from "next/navigation";
 import CustomPagination from "@/components/Pagination";
+import { useState,useEffect } from "react";
+import ProtectedRoute from "@/components/protected-component";
 
 const Entertainement = (props) => {
   const { data, page: pag, totalPages } = props;
@@ -11,7 +14,7 @@ const Entertainement = (props) => {
   };
 
   useEffect(() => {
-    router.push(`/business?page=${page}`);
+    router.push(`/entertainment?page=${page}`);
   }, [page]);
 
   return (
@@ -28,12 +31,13 @@ const Entertainement = (props) => {
   );
 };
 
+
 export default Entertainement;
 
 export async function getServerSideProps({ query }) {
   const page = parseInt(query.page) ? parseInt(query.page) : 1;
   const entertainment = await fetch(
-    `https://newsapi.org/v2/top-headlines?country=in&apiKey=a4a821b942a84281a39142d5f43f8bd3&category=entertainment&page=${page}`
+    `https://newsapi.org/v2/top-headlines?country=in&apiKey=24f5f0e4a8a343f38256b7705dfdb01f&category=entertainment&page=${page}`
   );
   const entertainmentResult = await entertainment.json();
   const entertainmentFilteredData = entertainmentResult.articles.filter(
@@ -45,6 +49,6 @@ export async function getServerSideProps({ query }) {
       page: page,
       totalPages: entertainmentResult.totalResults,
     },
-    revalidate: 600,
+  
   };
 }
