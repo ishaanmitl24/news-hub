@@ -1,5 +1,7 @@
 import LightMode from "@/components/LightMode";
 import CustomPagination from "@/components/Pagination";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 const Technology = (props) => {
   const { data, page: pag, totalPages } = props;
@@ -11,7 +13,7 @@ const Technology = (props) => {
   };
 
   useEffect(() => {
-    router.push(`/business?page=${page}`);
+    router.push(`/technology?page=${page}`);
   }, [page]);
 
   return (
@@ -44,7 +46,6 @@ export async function getServerSideProps({ query }) {
       data: technologyFilteredData,
       page: page,
       totalPages: technologyResult.totalResults,
-    },
-    revalidate: 600,
+    }
   };
 }

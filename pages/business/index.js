@@ -6,8 +6,8 @@ import CustomPagination from "@/components/Pagination";
 const Business = (props) => {
   const { data, page: pag, totalPages } = props;
   const router = useRouter();
-  const [page, setPage] = useState(parseInt(pag));
-  
+  const [page, setPage] = useState(pag);
+
   
   const pageHandler = (event, value) => {
     setPage(value);
@@ -38,7 +38,7 @@ const Business = (props) => {
 export default Business;
 
 export async function getServerSideProps({ query }) {
-  const page = query.page ? parseInt(query.page) : 1;
+  const page = query.page ? +query.page : 1;
 
   const business = await fetch(
     `https://newsapi.org/v2/top-headlines?country=in&apiKey=24f5f0e4a8a343f38256b7705dfdb01f&category=business&page=${page}`
